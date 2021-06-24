@@ -3,6 +3,8 @@ local playerGamerTags = {}
 
 local distanceToCheck = GetConvarInt('txAdminMenu-playerIdDistance', 150)
 
+local callbacks = {}
+
 local gamerTagCompsEnum = {
     GamerName = 0,
     CrewTag = 1,
@@ -79,16 +81,25 @@ local function showGamerTags()
 end
 
 RegisterNUICallback('togglePlayerIDs', function(_, cb)
-    isPlayerIDActive = not isPlayerIDActive
+    callbacks["togglePlayerIDs"] = cb
 
-    cb({ isShowing = isPlayerIDActive })
+    TriggerServerEvent('txAdmin:menu:togglePlayerIDs')
+end)
 
-    if not isPlayerIDActive then
-        -- Remove all gamer tags and clear out active table
-        cleanUpGamerTags()
+RegisterNetEvent('txAdmin:menu:togglePlayerIDs', function(authorized)
+    if authorized then
+        isPlayerIDActive = not isPlayerIDActive
+
+        if not isPlayerIDActive then
+            -- Remove all gamer tags and clear out active table
+            cleanUpGamerTags()
+        end
+
+        debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIDActive))
     end
-
-    debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIDActive))
+    
+    callbacks["togglePlayerIDs"]({ isShowing = isPlayerIDActive })
+    callbacks["togglePlayerIDs"] = nil
 end)
 
 CreateThread(function()

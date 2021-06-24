@@ -366,6 +366,20 @@ RegisterServerEvent('txAdmin:menu:spectatePlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
 end)
 
+RegisterServerEvent('txAdmin:menu:togglePlayerIDs', function(id)
+  local src = source
+
+  local allow = PlayerHasTxPermission(src, 'players.toggleIDs')
+  local playerName = "unknown"
+  if allow then
+    playerName = GetPlayerName(id)
+  end
+
+  TriggerClientEvent('txAdmin:menu:togglePlayerIDs', src, allow)
+
+  TriggerEvent('txaLogger:menuEvent', src, "togglePlayerIDs", allow, playerName)
+end)
+
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.heal')
